@@ -80,6 +80,17 @@ BLYNK_WRITE(V2) {
   Wire.endTransmission();  
 }
 
+BLYNK_WRITE(V3) {
+  int valV3 = param.asInt();
+
+  Wire.beginTransmission(8); /* begin with device address 8 */
+
+  Wire.write("V3=");
+  Wire.write(valV3);
+  
+  Wire.endTransmission();  
+}
+
 void setup()
 {
   // Debug console
