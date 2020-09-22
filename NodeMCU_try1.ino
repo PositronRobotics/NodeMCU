@@ -85,8 +85,7 @@ BLYNK_WRITE(V3) {
 
   Wire.beginTransmission(8); /* begin with device address 8 */
 
-  Wire.write("V3=");
-  Wire.write(valV3);
+  SendInt(1234);
   
   Wire.endTransmission();  
 }
@@ -108,6 +107,17 @@ void setup()
   Wire.write("NodeMCU starts");
   
   Wire.endTransmission();    
+}
+
+void SendInt(int value)
+{
+    char values[4];
+    values[0] = value & 0xff;
+    values[1] = (value & 0xff00) >> 8;
+    values[2] = 0;
+    values[3] = 0;
+
+    Wire.write(values, 4);
 }
 
 void loop()
