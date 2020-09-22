@@ -111,13 +111,11 @@ void setup()
 
 void SendInt(int value)
 {
-    char values[4];
-    values[0] = value & 0xff;
-    values[1] = (value & 0xff00) >> 8;
-    values[2] = 0;
-    values[3] = 0;
+    char values[2];
+    values[0] = (value >> 8) & 0xFF;
+    values[1] = value & 0xFF;
 
-    Wire.write(values, 4);
+    Wire.write(values, 2);
 }
 
 void loop()
