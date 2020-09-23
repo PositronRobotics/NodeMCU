@@ -39,6 +39,13 @@ BLYNK_WRITE(V1) {
 BLYNK_WRITE(V2) {
   int m1 = param.asInt();
 
+  char sample[4];
+
+  sample[0]=(char)1;
+  sample[1]=98;
+  sample[2]=99;
+  sample[3]=100;
+
   Wire.beginTransmission(8); /* begin with device address 8 */
 
   if(m1==1)
@@ -49,6 +56,9 @@ BLYNK_WRITE(V2) {
   {
     Wire.write("m1=0");
   }
+
+  Wire.write("sample=");
+  Wire.write(sample);
   
   Wire.endTransmission();  
 }
