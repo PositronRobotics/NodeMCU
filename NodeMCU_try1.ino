@@ -1,4 +1,3 @@
-/* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
 
 
@@ -39,13 +38,6 @@ BLYNK_WRITE(V1) {
 BLYNK_WRITE(V2) {
   int m1 = param.asInt();
 
-  char sample[4];
-
-  sample[0]=(char)1;
-  sample[1]=98;
-  sample[2]=99;
-  sample[3]=100;
-
   Wire.beginTransmission(8); /* begin with device address 8 */
 
   if(m1==1)
@@ -56,9 +48,16 @@ BLYNK_WRITE(V2) {
   {
     Wire.write("m1=0");
   }
+  
+  Wire.endTransmission();  
+}
 
-  Wire.write("sample=");
-  Wire.write(sample);
+BLYNK_WRITE(V3) {
+  int valV3 = param.asInt();
+
+  Wire.beginTransmission(8); /* begin with device address 8 */
+
+  SendInt(valV3);
   
   Wire.endTransmission();  
 }
@@ -80,6 +79,14 @@ void setup()
   Wire.write("NodeMCU starts");
   
   Wire.endTransmission();    
+}
+
+void SendInt(int value)
+{
+    char values[4];
+    sprintf(values,"%04d",value);
+
+    Wire.write(values, 4);
 }
 
 void loop()
