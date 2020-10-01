@@ -27,10 +27,7 @@ BLYNK_WRITE(V1) {
 
   Wire.beginTransmission(8); /* begin with device address 8 */
 
-  Wire.write("X = ");
-  Wire.write(x);
-  Wire.write("; Y = ");
-  Wire.write(y);
+  SendJoystickVal(x,y);
   
   Wire.endTransmission();  
 }
@@ -85,6 +82,14 @@ void SendInt(int value)
 {
     char values[4];
     sprintf(values,"%04d",value);
+
+    Wire.write(values, 4);
+}
+
+void SendJoystickVal(int x, int y)
+{
+    char values[4];
+    sprintf(values,"j1%01d%01d",x,y);
 
     Wire.write(values, 4);
 }
