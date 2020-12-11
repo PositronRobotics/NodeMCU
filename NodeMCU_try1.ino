@@ -20,17 +20,14 @@ BLYNK_WRITE(V1) {
   int y = param[1].asInt();
 
   // Do something with x and y
-  Serial.print("X = ");
-  Serial.print(x);
-  Serial.print("; Y = ");
-  Serial.println(y);
+  //Serial.print("X = ");
+  //Serial.print(x);
+  //Serial.print("; Y = ");
+  //Serial.println(y);
 
   Wire.beginTransmission(8); /* begin with device address 8 */
 
-  Wire.write("X = ");
-  Wire.write(x);
-  Wire.write("; Y = ");
-  Wire.write(y);
+  SendJoystickVal(x,y);
   
   Wire.endTransmission();  
 }
@@ -43,10 +40,12 @@ BLYNK_WRITE(V2) {
   if(m1==1)
   {
     Wire.write("m1=1");
+    //Serial.println("m1=1");
   }
   else
   {
     Wire.write("m1=0");
+    //Serial.println("m1=0");
   }
   
   Wire.endTransmission();  
@@ -58,6 +57,9 @@ BLYNK_WRITE(V3) {
   Wire.beginTransmission(8); /* begin with device address 8 */
 
   SendInt(valV3);
+
+  //Serial.print("valV3=");
+  //Serial.println(valV3);
   
   Wire.endTransmission();  
 }
@@ -66,6 +68,8 @@ void setup()
 {
   // Debug console
   Serial.begin(9600);
+
+  Serial.print("PT100");
 
   Blynk.begin(auth, ssid, pass);
   // You can also specify server:
@@ -84,7 +88,15 @@ void setup()
 void SendInt(int value)
 {
     char values[4];
-    sprintf(values,"%04d",value);
+    //sprintf(values,"%04d",value);
+
+    Wire.write(values, 4);
+}
+
+void SendJoystickVal(int x, int y)
+{
+    char values[4];
+    sprintf(values,"j1%01d%01d",x,y);
 
     Wire.write(values, 4);
 }
