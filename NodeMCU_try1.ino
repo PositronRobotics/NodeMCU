@@ -88,7 +88,7 @@ void setup()
 void SendInt(int value)
 {
     char values[4];
-    //sprintf(values,"%04d",value);
+    sprintf(values,"%04d",value);
 
     Wire.write(values, 4);
 }
