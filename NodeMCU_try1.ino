@@ -120,10 +120,10 @@ void SendJoystickVal_Vehicle(int x, int y)
 
 void SendJoystickVal_Head(int x, int y)
 {
-    char values[4];
-    sprintf(values,"j2%01d%01d",x,y);
+    char values[8];
+    sprintf(values,"j2%03d%03d",x,y);
 
-    Wire.write(values, 4);
+    Wire.write(values, 8);
 }
 
 void loop()
