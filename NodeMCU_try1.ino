@@ -27,7 +27,24 @@ BLYNK_WRITE(V1) {
 
   Wire.beginTransmission(8); /* begin with device address 8 */
 
-  SendJoystickVal(x,y);
+  SendJoystickVal_Vehicle(x,y);
+  
+  Wire.endTransmission();  
+}
+
+BLYNK_WRITE(V4) {
+  int x = param[0].asInt();
+  int y = param[1].asInt();
+
+  // Do something with x and y
+  //Serial.print("X = ");
+  //Serial.print(x);
+  //Serial.print("; Y = ");
+  //Serial.println(y);
+
+  Wire.beginTransmission(8); /* begin with device address 8 */
+
+  SendJoystickVal_Head(x,y);
   
   Wire.endTransmission();  
 }
@@ -93,10 +110,18 @@ void SendInt(int value)
     Wire.write(values, 4);
 }
 
-void SendJoystickVal(int x, int y)
+void SendJoystickVal_Vehicle(int x, int y)
 {
     char values[4];
     sprintf(values,"j1%01d%01d",x,y);
+
+    Wire.write(values, 4);
+}
+
+void SendJoystickVal_Head(int x, int y)
+{
+    char values[4];
+    sprintf(values,"j2%01d%01d",x,y);
 
     Wire.write(values, 4);
 }
