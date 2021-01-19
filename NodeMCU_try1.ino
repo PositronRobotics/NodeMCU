@@ -15,6 +15,15 @@ char auth[] = "uKrfRqfljEc1KtnNXqikouIxrVut-97-";
 char ssid[] = "PreeWiFi_2GHz";
 char pass[] = "pree123*";
 
+enum ArmServos{RSF,RSL,REL};
+
+char arrArmServoIDs[3][4] =
+{ 
+  "RSF",
+  "RSL",
+  "REL",  
+};
+
 BLYNK_WRITE(V1) {
   int x = param[0].asInt();
   int y = param[1].asInt();
@@ -73,7 +82,7 @@ BLYNK_WRITE(V3) {
 
   Wire.beginTransmission(8); /* begin with device address 8 */
 
-  SendInt(valV3);
+  SendInt(RSF,valV3);
 
   //Serial.print("valV3=");
   //Serial.println(valV3);
@@ -102,12 +111,12 @@ void setup()
   Wire.endTransmission();    
 }
 
-void SendInt(int value)
+void SendInt(int ArmServoID, int value)
 {
-    char values[4];
-    //sprintf(values,"%04d",value);
+    char values[6];
+    sprintf(values,"%s%03d",arrArmServoIDs[ArmServoID],value);
 
-    Wire.write(values, 4);
+    Wire.write(values, 6);
 }
 
 void SendJoystickVal_Vehicle(int x, int y)
