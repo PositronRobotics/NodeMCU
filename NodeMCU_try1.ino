@@ -15,6 +15,8 @@ char auth[] = "uKrfRqfljEc1KtnNXqikouIxrVut-97-";
 char ssid[] = "PreeWiFi_2GHz";
 char pass[] = "pree123*";
 
+WidgetTerminal terminal(V4);
+
 BLYNK_WRITE(V1) {
   int x = param[0].asInt();
   int y = param[1].asInt();
@@ -32,33 +34,47 @@ BLYNK_WRITE(V1) {
   Wire.endTransmission();  
 }
 
-BLYNK_WRITE(V2) {
-  int m1 = param.asInt();
+BLYNK_WRITE(V4)
+{
+  char values[3];
+  
+  Serial.print("Terminal input2:");
+  Serial.print(param.asStr());
+  Serial.println();
+  terminal.print("Msg back from NodeMCU") ;
+  terminal.println(param.asStr());
+  terminal.flush();
+  
+  sprintf(values,param.asStr());
+
+  Wire.beginTransmission(8);
+  Wire.write(values, 3);
+  Wire.endTransmission();  
+}
+
+BLYNK_WRITE(V2)
+{
+  int valV2 = param.asInt();
 
   Wire.beginTransmission(8); /* begin with device address 8 */
 
-  if(m1==1)
-  {
-    Wire.write("m1=1");
-    Serial.println("m1=1");
-  }
-  else
-  {
-    Wire.write("m1=0");
-    Serial.println("m1=0");
-  }
+  SendInt(2,valV2);
+
+  Serial.print("V2=");
+  Serial.println(valV2);
   
   Wire.endTransmission();  
 }
 
-BLYNK_WRITE(V3) {
+BLYNK_WRITE(V3)
+{
   int valV3 = param.asInt();
 
   Wire.beginTransmission(8); /* begin with device address 8 */
 
-  SendInt(valV3);
+  SendInt(3,valV3);
 
-  Serial.print("valV3=");
+  Serial.print("V3=");
   Serial.println(valV3);
   
   Wire.endTransmission();  
@@ -82,26 +98,44 @@ void setup()
 
   Wire.write("NodeMCU starts");
   
-  Wire.endTransmission();    
+  Wire.endTransmission();
+
+  terminal.clear();
 }
 
-void SendInt(int value)
+void SendInt(int ID, int value)
 {
-    char values[4];
-    sprintf(values,"%04d",value);
+    char values[3];
+    sprintf(values,"V%1d%1d",ID,value);
 
-    Wire.write(values, 4);
+    Wire.write(values, 3);
 }
 
 void SendJoystickVal_Vehicle(int x, int y)
 {
     char values[4];
-    sprintf(values,"j1%01d%01d",x,y);
+    sprintf(values,"J1%01d%01d",x,y);
 
     Wire.write(values, 4);
 }
 
 void loop()
 {
-  Blynk.run();   
+  String rcmd = "";
+  
+  Blynk.run();
+
+  Wire.requestFrom(8, 13);
+  while (0 <Wire.available())
+  {
+    //char c = Wire.read();      /* receive byte as a character */
+    //Serial.print(c);           /* print the character */
+    rcmd += (char)Wire.read();
+  }
+  Serial.print("Recd Cmd:");
+  Serial.print(rcmd);
+  //Serial.print(rcmd.substring(3,4));
+  Serial.println();   
+
+  delay(1000);
 }
