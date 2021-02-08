@@ -17,7 +17,28 @@ char pass[] = "pree123*";
 
 WidgetTerminal terminal(V4);
 
-BLYNK_WRITE(V1) {
+void setup()
+{
+  // Debug console
+  Serial.begin(9600);
+
+  Serial.print("PT100");
+
+  Blynk.begin(auth, ssid, pass);
+
+  Wire.begin(D1, D2);
+
+  Wire.beginTransmission(8); /* begin with device address 8 */
+
+  Wire.write("NodeMCU starts");
+  
+  Wire.endTransmission();
+
+  terminal.clear();
+}
+
+BLYNK_WRITE(V1)
+{
   int x = param[0].asInt();
   int y = param[1].asInt();
 
@@ -41,9 +62,6 @@ BLYNK_WRITE(V4)
   Serial.print("Terminal input2:");
   Serial.print(param.asStr());
   Serial.println();
-  terminal.print("Msg back from NodeMCU") ;
-  terminal.println(param.asStr());
-  terminal.flush();
   
   sprintf(values,param.asStr());
 
@@ -80,29 +98,6 @@ BLYNK_WRITE(V3)
   Wire.endTransmission();  
 }
 
-void setup()
-{
-  // Debug console
-  Serial.begin(9600);
-
-  Serial.print("PT100");
-
-  Blynk.begin(auth, ssid, pass);
-  // You can also specify server:
-  //Blynk.begin(auth, ssid, pass, "blynk-cloud.com", 80);
-  //Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,100), 8080);
-
-  Wire.begin(D1, D2);
-
-  Wire.beginTransmission(8); /* begin with device address 8 */
-
-  Wire.write("NodeMCU starts");
-  
-  Wire.endTransmission();
-
-  terminal.clear();
-}
-
 void SendInt(int ID, int value)
 {
     char values[3];
@@ -125,17 +120,23 @@ void loop()
   
   Blynk.run();
 
-  Wire.requestFrom(8, 13);
+  Wire.requestFrom(8, 26);
   while (0 <Wire.available())
   {
     //char c = Wire.read();      /* receive byte as a character */
     //Serial.print(c);           /* print the character */
     rcmd += (char)Wire.read();
   }
-  Serial.print("Recd Cmd:");
-  Serial.print(rcmd);
-  //Serial.print(rcmd.substring(3,4));
-  Serial.println();   
 
-  delay(1000);
+  if((rcmd[0]=='A')&&(rcmd[1]=='R'))
+  {
+    Serial.print("Recd Cmd:");
+    Serial.println(rcmd);
+
+    terminal.print("NodeMCU:") ;
+    terminal.println(rcmd);
+    terminal.flush();    
+  }
+  
+  delay(500);
 }
