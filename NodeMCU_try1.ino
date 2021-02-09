@@ -138,5 +138,5 @@ void loop()
     terminal.flush();    
   }
   
-  delay(500);
+  delay(1000);
 }
